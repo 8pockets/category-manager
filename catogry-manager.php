@@ -1,7 +1,7 @@
 <?php
 /* 
 Plugin Name: タクソノミ非表示マネージャー
-Plugin URI: http://tabroom.com/
+Plugin URI: http://8pockets.com
 Description: タクソノミー非表示マネージャー
 Author: 8pockets
 Version: 1.0.0 
