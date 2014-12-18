@@ -14,15 +14,37 @@
 	font-size: 10px;
 	vertical-align: bottom;
 }
+/*
 .category-manager label input[type=checkbox]:checked:before {
 	content: '\353';
 	margin: -39px 0 0 11px;
 	font: 400 43px/1 dashicons;
 	color: #ff0000;
 }
+*/
 .category-manager .children_value:before{
-	content:"ー";
+	content:"＞";
 }
 .category-manager .grandchild_value:before{
-	content:"ーー";
+	content:"＞＞";
+}
+#submit_button{
+	padding: 4px 22px;
+	font-size: 1.0em;
+	background-color: #3498db;
+	color: #fff;
+	border-style: none;
+	cursor: pointer;
+}
+.exclude-area{
+	margin-top: 40px;
+}
+.exclude-area form .exclude-submit{
+	margin: 0 0 10px 10px;
+	padding: 4px 10px 4px;
+	font-size: 0.9em;
+	background-color: #16a085;
+	color: #fff;
+	border-style: none;
+	cursor: pointer;
 }
