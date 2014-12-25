@@ -33,7 +33,13 @@ function category_manager_content_filter($args, $taxonomies) {
 	$args['exclude'] = $temrs;
 	return $args;
 }
- 
+/*
+add_filter('get_terms_orderby', 'TO_get_terms_orderby', 10, 2);
+function TO_get_terms_orderby($orderby, $args){
+	//ここにタクソノミーの並び順を出力
+	return $orderby
+}
+*/
 //管理画面のメニューページ追加
 add_action('admin_menu', 'category_manager_admin_menu');
 function category_manager_admin_menu() {
@@ -47,22 +53,28 @@ function admin_styles()
 	$myCssFile = BASEURL . '/css/to.css';
 	wp_register_style('tocss', $myCssFile);
 	wp_enqueue_style( 'tocss');
+	
+	$JqueryUiCssFile = BASEURL . '/css/jquery-ui.css';
+	wp_register_style('jquery-uicss', $JqueryUiCssFile);
+	wp_enqueue_style( 'jquery-uicss');
 }
 //メニューページのJS読み込み
-/*
+
 add_action('admin_print_scripts', 'admin_scripts');
 function admin_scripts()
 {
-	$myJsFile = BASEURL . '/js/jquery-2.1.1.min.js';
-	wp_register_script('jqueryjs', $myJsFile);
-	wp_enqueue_script( 'jqueryjs');
+	$JqueryFile = BASEURL . '/js/jquery-2.1.1.min.js';
+	wp_register_script('Jqueryjs', $JqueryFile);
+	wp_enqueue_script( 'Jqueryjs');
+
+	$JqueryUiJsFile = BASEURL . '/js/jquery-ui.min.js';
+	wp_register_script('JqueryUijs', $JqueryUiJsFile);
+	wp_enqueue_script( 'JqueryUijs');
  
 	$myJsFile = BASEURL . '/js/to-javascript.js';
 	wp_register_script('to-javascriptjs', $myJsFile);
 	wp_enqueue_script( 'to-javascriptjs');
-}
-*/
- 
+} 
  
 //メニューページ関連の実際の処理
 function category_manager_admin_menu_edit_setting() {
@@ -71,39 +83,58 @@ function category_manager_admin_menu_edit_setting() {
 	}
 	$temrs = get_option('category_manager_plugin_value');
 //print_r(array_values($temrs));
- 
+
+	if (isset($_POST['order'])) {
+		update_option('category_manager_order', $_POST['order']);
+	}
+	$temrs_order = get_option('category_manager_order');
+	print_r($temrs_order);
+
 	$categories = get_categories('hide_empty=0');
-	echo '<h2>フロントから非表示にするカテゴリーを選んでください。</h2><h5>選択されているカテゴリーの中の記事は消えずに表示されます。</h5><div class="category-manager"><form action="" method="post">';
+	echo '<h2>フロントから非表示にするカテゴリーを選んでください。</h2><h5>選択されているカテゴリーの中の記事は消えずに表示されます。</h5> <div id="ajax-response"></div><div class="category-manager"><form action="" method="post"><ul class="sortable ui-sortable parent_sortable">';
 	foreach ($categories as $parent_value){
 		if($parent_value->category_parent==0){
+			echo '<li id="'.$parent_value->term_id.'">';
 			if(array_search($parent_value->term_id,$temrs) === FALSE){
 				echo '<div class="form-text-parent"><label><input type="checkbox" name="category[]" value="' . $parent_value->term_id . '">' . $parent_value->name . '</label><span>('.$parent_value->count.')</span></div>';
 			}else{
 				echo '<div class="form-text-parent"><label><input type="checkbox" name="category[]" value="' . $parent_value->term_id . '" checked>' . $parent_value->name . '</label><span>('.$parent_value->count.')</span></div>';
 			}
 			$children = get_categories("hide_empty=0&child_of=$parent_value->term_id");
-			foreach( $children as $children_value ){
+			for($i=0;$i<count($children);$i++){
+				$children_value = $children[$i];
+				if($i == 0){echo '<ul class="children sortable ui-sortable children_sortable">';}
 				if($children_value->category_parent==$parent_value->term_id){
+					echo '<li id="'.$children_value->term_id.'">';
 					if(array_search($children_value->term_id,$temrs) === FALSE){
 						echo '<div class="form-text-children"><label class="children_value"><input type="checkbox" name="category[]" value="' . $children_value->term_id . '">' . $children_value->name . '</label><span>('.$parent_value->count.')</span></div>';
 					}else{
 						echo '<div class="form-text-children"><label class="children_value"><input type="checkbox" name="category[]" value="' . $children_value->term_id . '" checked>' . $children_value->name . '</label><span>('.$parent_value->count.')</span></div>';
 					}
 					$grandchild = get_categories("hide_empty=0&parent=$children_value->term_id");
-					foreach( $grandchild as $grandchild_value ){
+					for($e=0;$e<count($grandchild);$e++){
+						$grandchild_value = $grandchild[$e];
+						if($e == 0){echo '<ul class="children sortable ui-sortable grandchildren_sortable">';}
 						if($grandchild_value->category_parent==$children_value->term_id){
+							echo '<li id="'.$grandchild_value->term_id.'">';
 							if(array_search($grandchild_value->term_id,$temrs) === FALSE){
 								echo '<div class="form-text-grandchild"><label class="grandchild_value"><input type="checkbox" name="category[]" value="' . $grandchild_value->term_id . '">' . $grandchild_value->name . '</label><span>('.$parent_value->count.')</span></div>';
 							}else{
 								echo '<div class="form-text-grandchild"><label class="grandchild_value"><input type="checkbox" name="category[]" value="' . $grandchild_value->term_id . '" checked>' . $grandchild_value->name . '</label><span>('.$parent_value->count.')</span></div>';
 							}
+							echo '</li>';
 						}
+						if($e == count($grandchild)-1){echo '</ul>';}
 					}
+					echo '</li>';
 				}
+				if($i == count($children)-1){echo '</ul>';}
 			}
+			echo '</li>';
 		}
 	}
-	echo '<p><input type="checkbox" name="category[]" value="display-none" class="display-none" checked><input type="submit" id="submit_button" value="更新" /></p></form></div>';
+	echo '</ul><p><input type="checkbox" name="category[]" value="display-none" class="display-none" checked><input type="hidden" id="result" name="order"><input type="submit" id="submit_button" value="更新" /></p></form></div>';
 	//表示させるページをしぼるPHPファイル
 	include_once(BASEPATH . '/include/exclude-page.php');
+
 }
