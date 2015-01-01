@@ -1,0 +1,64 @@
+@mixin inline-block{
+	background-color: #fff;
+	border: 1px solid #e0e0e0;
+	width: 400px;
+	height: auto;
+	padding: 10px;
+}
+.category-manager .form-text-parent{
+	@include inline-block;
+	margin: 0 0 10px 0;
+}
+.category-manager .form-text-children{
+	@include inline-block;
+	margin: 0 0 10px 40px;
+}
+.category-manager .form-text-grandchild{
+	@include inline-block;
+	margin: 0 0 10px 80px;
+}
+ul.sortable li.placeholder{
+	background-color: #333;
+	color: #fff;
+	border: 1px solid #e0e0e0;
+	width: 400px;
+	height: auto;
+	margin-bottom: 10px;
+	padding: 10px;
+}
+ul.sortable li.placeholder:before{
+	content:"Sort Here !";
+}
+.category-manager form div .label_count{
+	font-size: 10px;
+	margin: 0 0 0 3px;
+	vertical-align: bottom;
+}
+.category-manager form input[type=checkbox]:checked + .label_text {
+	opacity: 0.2;
+}
+.category-manager form input[type=checkbox]:checked + .label_text + .label_count {
+	opacity: 0.2;
+}
+.category-manager .submit_box{
+	#submit_button{
+		padding: 4px 22px;
+		font-size: 1.0em;
+		background-color: #3498db;
+		color: #fff;
+		border-style: none;
+		cursor: pointer;
+	}
+}
+.exclude-area{
+	margin-top: 40px;
+	form .exclude-submit{
+		margin: 0 0 10px 10px;
+		padding: 4px 10px 4px;
+		font-size: 0.9em;
+		background-color: #16a085;
+		color: #fff;
+		border-style: none;
+		cursor: pointer;
+	}
+}

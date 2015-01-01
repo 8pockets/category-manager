@@ -1,5 +1,5 @@
 <?php
-	echo '<div class="exclude-area">これより以下ののエリアは、非表示を行いたくない投稿やページを指定できます。「,」(コンマ)で区切ると複数指定できます。';
+	echo '<div class="exclude-area"><p>これより以下ののエリアは、非表示を行いたくない投稿やページを指定できます。「,」(コンマ)で区切ると複数指定できます。</p>';
 	if (isset($_POST['post-exclude'])) {
 		update_option('category_manager_exclude_post', $_POST['post-exclude']);
 	}

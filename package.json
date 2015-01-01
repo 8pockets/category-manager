@@ -1,0 +1,24 @@
+{
+  "name": "category-manager",
+  "version": "0.0.0",
+  "description": "wordpressのカテゴリーを表示or非表示を切り替えるプラグインです。",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/8pockets/category-manager.git"
+  },
+  "author": "",
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/8pockets/category-manager/issues"
+  },
+  "homepage": "https://github.com/8pockets/category-manager",
+  "devDependencies": {
+    "gulp": "~3.8.10",
+    "gulp-sass": "~1.2.4",
+    "gulp-sourcemaps": "~1.3.0"
+  }
+}

@@ -90,38 +90,63 @@ function category_manager_admin_menu_edit_setting() {
 	$temrs_order = get_option('category_manager_order');
 	print_r($temrs_order);
 
+	echo <<< EOM
+	<h2>フロントから非表示にするカテゴリーを選んでください。</h2>
+	<h5>選択されているカテゴリーの中の記事は消えずに表示されます。</h5>
+	<div id="ajax-response"></div>
+	<div class="category-manager">
+	<form action="" method="post">
+	<ul class="sortable ui-sortable parent_sortable">
+EOM;
 	$categories = get_categories('hide_empty=0');
-	echo '<h2>フロントから非表示にするカテゴリーを選んでください。</h2><h5>選択されているカテゴリーの中の記事は消えずに表示されます。</h5> <div id="ajax-response"></div><div class="category-manager"><form action="" method="post"><ul class="sortable ui-sortable parent_sortable">';
 	foreach ($categories as $parent_value){
 		if($parent_value->category_parent==0){
-			echo '<li id="'.$parent_value->term_id.'">';
-			if(array_search($parent_value->term_id,$temrs) === FALSE){
-				echo '<div class="form-text-parent"><label><input type="checkbox" name="category[]" value="' . $parent_value->term_id . '">' . $parent_value->name . '</label><span>('.$parent_value->count.')</span></div>';
-			}else{
-				echo '<div class="form-text-parent"><label><input type="checkbox" name="category[]" value="' . $parent_value->term_id . '" checked>' . $parent_value->name . '</label><span>('.$parent_value->count.')</span></div>';
-			}
+			if(array_search($parent_value->term_id,$temrs) !== FALSE){$checked = "checked";}
+				echo <<< EOM
+				<li id="{$parent_value->term_id}">
+				<div class="form-text-parent">
+					<label>
+					<input type="checkbox" name="category[]" value="{$parent_value->term_id}" {$checked}>
+					<span class="label_text">{$parent_value->name}</span>
+					<span class="label_count">({$parent_value->count})</span>
+					</label>
+				</div>
+EOM;
+				$checked = "";
 			$children = get_categories("hide_empty=0&child_of=$parent_value->term_id");
 			for($i=0;$i<count($children);$i++){
 				$children_value = $children[$i];
 				if($i == 0){echo '<ul class="children sortable ui-sortable children_sortable">';}
 				if($children_value->category_parent==$parent_value->term_id){
-					echo '<li id="'.$children_value->term_id.'">';
-					if(array_search($children_value->term_id,$temrs) === FALSE){
-						echo '<div class="form-text-children"><label class="children_value"><input type="checkbox" name="category[]" value="' . $children_value->term_id . '">' . $children_value->name . '</label><span>('.$parent_value->count.')</span></div>';
-					}else{
-						echo '<div class="form-text-children"><label class="children_value"><input type="checkbox" name="category[]" value="' . $children_value->term_id . '" checked>' . $children_value->name . '</label><span>('.$parent_value->count.')</span></div>';
-					}
+					if(array_search($children_value->term_id,$temrs) !== FALSE){$checked = "checked";}
+						echo <<< EOM
+						<li id="{$children_value->term_id}">
+						<div class="form-text-children">
+							<label class="children_value">
+							<input type="checkbox" name="category[]" value="{$children_value->term_id}" {$checked}>
+							<span class="label_text">{$children_value->name}</span>
+							<span class="label_count">({$children_value->count})</span>
+							</label>
+						</div>
+EOM;
+						$checked = "";
 					$grandchild = get_categories("hide_empty=0&parent=$children_value->term_id");
 					for($e=0;$e<count($grandchild);$e++){
 						$grandchild_value = $grandchild[$e];
 						if($e == 0){echo '<ul class="children sortable ui-sortable grandchildren_sortable">';}
 						if($grandchild_value->category_parent==$children_value->term_id){
-							echo '<li id="'.$grandchild_value->term_id.'">';
-							if(array_search($grandchild_value->term_id,$temrs) === FALSE){
-								echo '<div class="form-text-grandchild"><label class="grandchild_value"><input type="checkbox" name="category[]" value="' . $grandchild_value->term_id . '">' . $grandchild_value->name . '</label><span>('.$parent_value->count.')</span></div>';
-							}else{
-								echo '<div class="form-text-grandchild"><label class="grandchild_value"><input type="checkbox" name="category[]" value="' . $grandchild_value->term_id . '" checked>' . $grandchild_value->name . '</label><span>('.$parent_value->count.')</span></div>';
-							}
+							if(array_search($grandchild_value->term_id,$temrs) !== FALSE){$checked = "checked";}
+								echo <<< EOM
+								<li id="{$grandchild_value->term_id}">
+								<div class="form-text-grandchild">
+									<label class="grandchild_value">
+									<input type="checkbox" name="category[]" value="{$grandchild_value->term_id}" {$checked}>
+									<span class="label_text">{$grandchild_value->name}</span>
+									<span class="label_count">({$grandchild_value->count})</span>
+									</label>
+								</div>
+EOM;
+								$checked = "";
 							echo '</li>';
 						}
 						if($e == count($grandchild)-1){echo '</ul>';}
@@ -133,7 +158,16 @@ function category_manager_admin_menu_edit_setting() {
 			echo '</li>';
 		}
 	}
-	echo '</ul><p><input type="checkbox" name="category[]" value="display-none" class="display-none" checked><input type="hidden" id="result" name="order"><input type="submit" id="submit_button" value="更新" /></p></form></div>';
+	echo <<< EOM
+	</ul>
+		<div class="submit_box">
+			<input type="hidden" name="category[]" value="display-none" class="display-none" checked>
+			<input type="hidden" id="result" name="order">
+			<input type="submit" id="submit_button" value="更新" />
+		</div>
+	</form>
+	</div>
+EOM;
 	//表示させるページをしぼるPHPファイル
 	include_once(BASEPATH . '/include/exclude-page.php');
 
