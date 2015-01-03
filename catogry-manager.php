@@ -4,7 +4,7 @@ Plugin Name: タクソノミ非表示マネージャー
 Plugin URI: http://8pockets.com
 Description: タクソノミー非表示マネージャー
 Author: 8pockets
-Version: 1.0.0 
+Version: 1.0.0
 Author URI: http://8pockets.com/
 */
 
@@ -88,7 +88,8 @@ function category_manager_admin_menu_edit_setting() {
 		update_option('category_manager_order', $_POST['order']);
 	}
 	$temrs_order = get_option('category_manager_order');
-	print_r($temrs_order);
+	$temrs_order_array = split(",",$temrs_order);
+//print_r($temrs_order_array);
 
 	echo <<< EOM
 	<h2>フロントから非表示にするカテゴリーを選んでください。</h2>
@@ -98,12 +99,26 @@ function category_manager_admin_menu_edit_setting() {
 	<form action="" method="post">
 	<ul class="sortable ui-sortable parent_sortable">
 EOM;
-	$categories = get_categories('hide_empty=0');
-	foreach ($categories as $parent_value){
+	$parents = get_categories('hide_empty=0');
+/*
+	ここで$parent[int]->term_idの配列を$temrs_order順に並び替える。
+
+	foreach ($temrs_order_array as $key => $temrs_order){
+			print_r($key .'/'.$temrs_order.'<br>');
+			print_r(get_term_by( 'slug', $temrs_order, 'category'));
+			$parentshoge += get_term_by( 'slug', $temrs_order, 'category');
+	}
+			echo '<pre>';
+			print_r($parentshoge);
+			echo '</pre>';
+*/
+//ここまで
+	for($k=0;$k<count($parents);$k++){
+		$parent_value = $parents[$k];
 		if($parent_value->category_parent==0){
 			if(array_search($parent_value->term_id,$temrs) !== FALSE){$checked = "checked";}
 				echo <<< EOM
-				<li id="{$parent_value->term_id}">
+				<li id="{$parent_value->slug}">
 				<div class="form-text-parent">
 					<label>
 					<input type="checkbox" name="category[]" value="{$parent_value->term_id}" {$checked}>
@@ -120,7 +135,7 @@ EOM;
 				if($children_value->category_parent==$parent_value->term_id){
 					if(array_search($children_value->term_id,$temrs) !== FALSE){$checked = "checked";}
 						echo <<< EOM
-						<li id="{$children_value->term_id}">
+						<li id="{$children_value->slug}">
 						<div class="form-text-children">
 							<label class="children_value">
 							<input type="checkbox" name="category[]" value="{$children_value->term_id}" {$checked}>
@@ -137,7 +152,7 @@ EOM;
 						if($grandchild_value->category_parent==$children_value->term_id){
 							if(array_search($grandchild_value->term_id,$temrs) !== FALSE){$checked = "checked";}
 								echo <<< EOM
-								<li id="{$grandchild_value->term_id}">
+								<li id="{$grandchild_value->slug}">
 								<div class="form-text-grandchild">
 									<label class="grandchild_value">
 									<input type="checkbox" name="category[]" value="{$grandchild_value->term_id}" {$checked}>
